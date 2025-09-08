@@ -1,0 +1,133 @@
+/* 基本的なスタイルとCRTモニタ風エフェクト */
+body {
+    font-family: 'VT323', monospace;
+    background-color: #000;
+    color: #0f0;
+    overflow: hidden;
+    cursor: default;
+}
+
+/* スキャンラインアニメーション */
+body::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(18, 16, 16, 0.1);
+    opacity: 0;
+    z-index: 1000;
+    pointer-events: none;
+    animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+    0% { opacity: 0.1; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.1; }
+}
+
+.scanline {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 98%, rgba(255,255,255,0.2) 99%, rgba(0,0,0,0.4) 100%);
+    background-size: 100% 4px;
+    animation: scan 7s linear infinite;
+    pointer-events: none;
+    z-index: 1001;
+}
+
+@keyframes scan {
+    from { background-position-y: 0px; }
+    to { background-position-y: 280px; }
+}
+
+/* コンソールウィンドウのスタイル */
+.console-window {
+    position: absolute;
+    border: 2px solid #0f0;
+    background-color: #080808; 
+    box-shadow: 0 0 15px #0f0;
+    overflow: hidden;
+    min-width: 300px;
+    min-height: 200px;
+}
+
+/* タイトルバー */
+.title-bar {
+    background-color: #0f0;
+    color: #000;
+    padding: 3px 8px;
+    font-weight: bold;
+    user-select: none;
+    cursor: move;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title-bar-text {
+    flex-grow: 1;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #000;
+    font-family: 'VT323', monospace;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 0 5px;
+}
+.close-btn:hover {
+    background-color: rgba(255, 0, 0, 0.5);
+}
+
+/* コンテンツエリア */
+.content {
+    padding: 10px;
+    height: calc(100% - 28px);
+    overflow-y: hidden;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* カーソルの点滅 */
+.cursor {
+    display: inline-block;
+    width: 10px;
+    height: 1.2em;
+    background-color: #0f0;
+    animation: blink 1s steps(1) infinite;
+    vertical-align: bottom;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+/* アラートウィンドウのスタイル */
+.alert-window {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background-color: #111;
+    border: 2px solid;
+    z-index: 2000;
+    box-shadow: 0 0 25px rgba(0,0,0,0.8);
+    transition: opacity 0.5s ease-out;
+}
+.alert-title-bar { padding: 5px 10px; font-weight: bold; color: #000; }
+.alert-content { padding: 20px; font-size: 1.1em; }
+.alert-success { border-color: #0f0; box-shadow: 0 0 20px #0f0; }
+.alert-success .alert-title-bar { background-color: #0f0; color: #000; }
+.alert-failure { border-color: #f00; box-shadow: 0 0 20px #f00; }
+.alert-failure .alert-title-bar { background-color: #f00; color: #fff; }
