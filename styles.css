@@ -5,6 +5,41 @@ body {
     color: #0f0;
     overflow: hidden;
     cursor: default;
+    position: relative;
+}
+
+/* パーティクルキャンバス */
+#particleCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 背景グリッド */
+.background-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    animation: gridMove 20s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes gridMove {
+    0% { transform: translateY(0) rotateX(60deg); }
+    100% { transform: translateY(50px) rotateX(60deg); }
 }
 
 /* スキャンラインアニメーション */
@@ -51,11 +86,79 @@ body::after {
 .console-window {
     position: absolute;
     border: 2px solid #0f0;
-    background-color: #080808; 
-    box-shadow: 0 0 15px #0f0;
+    background-color: #080808;
+    box-shadow: 0 0 15px #0f0, 0 0 30px rgba(0, 255, 0, 0.5);
     overflow: hidden;
     min-width: 300px;
     min-height: 200px;
+    z-index: 100;
+    animation: neonPulse 3s ease-in-out infinite;
+}
+
+@keyframes neonPulse {
+    0%, 100% {
+        box-shadow: 0 0 15px #0f0, 0 0 30px rgba(0, 255, 0, 0.5);
+        border-color: #0f0;
+    }
+    50% {
+        box-shadow: 0 0 25px #0f0, 0 0 50px rgba(0, 255, 0, 0.8), 0 0 70px rgba(0, 255, 0, 0.3);
+        border-color: #0ff;
+    }
+}
+
+/* グリッチエフェクト */
+@keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+}
+
+.glitch-effect {
+    animation: glitch 0.3s ease-in-out;
+}
+
+.glitch-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+}
+
+.glitch-screen.active {
+    animation: screenGlitch 0.6s ease-in-out;
+}
+
+@keyframes screenGlitch {
+    0%, 100% {
+        opacity: 0;
+        background: transparent;
+    }
+    10% {
+        opacity: 1;
+        background: linear-gradient(90deg, #f00 0%, transparent 10%, #0f0 20%, transparent 30%, #00f 40%, transparent 50%);
+        transform: translateX(-10px);
+    }
+    20% {
+        opacity: 0.8;
+        background: linear-gradient(90deg, transparent 0%, #0ff 20%, transparent 40%, #f0f 60%, transparent 80%);
+        transform: translateX(10px);
+    }
+    30% {
+        opacity: 1;
+        background: repeating-linear-gradient(0deg, #fff 0px, #000 2px, #fff 4px);
+        transform: translateX(0);
+    }
+    40% {
+        opacity: 0.5;
+        background: transparent;
+    }
 }
 
 /* タイトルバー */

@@ -2,24 +2,68 @@ document.addEventListener('DOMContentLoaded', () => {
     const windows = document.querySelectorAll('.console-window');
     const placedRects = []; // 配置済みウィンドウの位置を保存する配列
 
+    // パーティクルシステムを初期化
+    initParticleSystem();
+
     // ウィンドウの初期化と配置
     windows.forEach(element => {
         placeWindowWithoutOverlap(element, placedRects);
         initializeWindowControls(element);
     });
-    
+
     // 各コンソールのコンテンツ生成を開始
     setupConsole1();
     setupConsole2();
     setupConsole3();
     setupConsole4();
-    
+
     // ランダムイベントを開始
     startRandomEvents();
 });
 
 // --- ユーティリティ関数 ---
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+// --- パーティクルシステム ---
+function initParticleSystem() {
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const characters = '01アイウエオカキクサシスセタチツテナニヌネハヒフヘマミムメヤユヨラリルレワヲンABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const fontSize = 16;
+    const columns = canvas.width / fontSize;
+
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function drawParticles() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#0f0';
+        ctx.font = fontSize + 'px monospace';
+
+        for (let i = 0; i < drops.length; i++) {
+            const text = characters.charAt(Math.floor(Math.random() * characters.length));
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }
+
+    setInterval(drawParticles, 50);
+
+    // リサイズ対応
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+}
 
 async function typeWriter(element, text, speed) {
      const content = element.querySelector('.content');
@@ -146,12 +190,15 @@ function showAlert(title, message, type) {
     const alertWindow = document.getElementById('alertWindow');
     document.getElementById('alertTitle').textContent = `:: ${title} ::`;
     document.getElementById('alertContent').textContent = message;
-    
+
     alertWindow.className = 'alert-window';
     alertWindow.classList.add(type === 'SUCCESS' ? 'alert-success' : 'alert-failure');
-    
+
     alertWindow.style.opacity = '1';
     alertWindow.style.display = 'block';
+
+    // グリッチエフェクトをトリガー
+    triggerGlitchEffect();
 
     setTimeout(() => {
         alertWindow.style.opacity = '0';
@@ -160,6 +207,25 @@ function showAlert(title, message, type) {
             isEventRunning = false;
         }, 500);
     }, 4000);
+}
+
+function triggerGlitchEffect() {
+    const glitchScreen = document.getElementById('glitchScreen');
+    const windows = document.querySelectorAll('.console-window');
+
+    // 画面全体のグリッチエフェクト
+    glitchScreen.classList.add('active');
+    setTimeout(() => {
+        glitchScreen.classList.remove('active');
+    }, 600);
+
+    // ウィンドウのグリッチエフェクト
+    windows.forEach(win => {
+        win.classList.add('glitch-effect');
+        setTimeout(() => {
+            win.classList.remove('glitch-effect');
+        }, 300);
+    });
 }
 
 async function runLogSequence(sequence) {
